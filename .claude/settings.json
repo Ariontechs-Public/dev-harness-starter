@@ -1,0 +1,7 @@
+{
+  "hooks": {
+    "Stop": [
+      { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/gate/gate.sh\"" }
+    ]
+  }
+}
