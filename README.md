@@ -11,35 +11,29 @@ git clone <this-repo> && cd dev-harness-starter
 cd sample-app && npm install && cd ..
 ```
 
-**1. 先看「沒 harness」會怎樣:**
+這個 repo 有兩個工作項:`TASK-feature.md`(在購物車加折扣碼輸入 UI)和
+`TASK-bug.md`(客戶回報購物車有時會壞掉)。
 
-```bash
-git checkout naive
-```
+**1. 先看「沒 harness」(`git checkout naive`):**
 
-在 repo 根開 Claude Code,跟它說「完成 TASK.md」。它會把 VIP 折扣的 happy path 補上、測試全綠、回報 done —— 但它沒處理負價、沒做金額 rounding(沒人要求、沒測試擋、沒 DoR 提醒)。**看起來完成,其實有 latent bug。**
+開 Claude Code,分別說「完成 TASK-feature.md」「完成 TASK-bug.md」。你會看到:
+- feature → 它**不問 UI 規格**,介面自己亂定。
+- bug → 它**沒有重現步驟就開始亂翻 code 亂猜**(其實是購物車被移到空才壞)。
 
-**2. 再看「有 harness」:**
+**2. 再看「有 harness」(`git checkout main`):**
 
-```bash
-git checkout main
-```
+同樣兩句話。這次因為一個 `UserPromptSubmit` hook 每次都注入 DoR:
+- feature → 它**先問介面規格 / 要 PLAN**,才動工。
+- bug → 它**先問怎麼複現**,定位到「空車」才修(順手補測試)。
 
-同一個任務、同一個 Claude Code。這次:
-
-- **DoR**(`CLAUDE.md`)→ 它動工前先問你邊界(疊加?負價?rounding?)
-- **三層 gate**(`gate/gate.sh`,接在 Stop hook)→ lint / type / test 沒全綠,它不准收工
-- **獨立審查**(`/independent-review`)→ fork 一個沒參與實作的 context,自己跑 gate 確認,不信實作者的自我報告
-
-同一個腦,被這層薄 harness 逼著真的做對。
-
-**3. 看那層 harness 到底加了什麼:**
+**3. 看 harness 加了什麼:**
 
 ```bash
 git diff naive..main --stat
 ```
 
-差異就是 `CLAUDE.md` + `.claude/settings.json` + `.claude/commands/independent-review.md` + invariant 測試 —— 幾個純文字檔。**這就是「薄 harness」:可以照著搬去你自己的 repo。**
+差異就是 `CLAUDE.md` + `.claude/settings.json`(DoR hook + Stop gate)+
+`.claude/commands/independent-review.md` + `gate/` —— 幾個純文字檔。
 
 ## 想換 model?
 
