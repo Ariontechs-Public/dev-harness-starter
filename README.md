@@ -11,8 +11,8 @@ git clone <this-repo> && cd dev-harness-starter
 cd sample-app && npm install && cd ..
 ```
 
-這個 repo 有兩個工作項:`TASK-feature.md`(在購物車加折扣碼輸入 UI)和
-`TASK-bug.md`(客戶回報購物車有時會壞掉)。
+這個 repo 有三個工作項:`TASK-feature.md`(加折扣碼輸入 UI)、
+`TASK-bug.md`(客戶回報購物車有時會壞掉)、`TASK-coupon.md`(加 SAVE200 折價券)。
 
 **1. 先看「沒 harness」(`git checkout naive`):**
 
@@ -33,7 +33,13 @@ git diff naive..main --stat
 ```
 
 差異就是 `CLAUDE.md` + `.claude/settings.json`(DoR hook + Stop gate)+
-`.claude/commands/independent-review.md` + `gate/` —— 幾個純文字檔。
+`.claude/commands/independent-review.md` + `gate/dor-reminder.sh` + invariant 測試 —— 幾個純文字檔。
+
+**4. 還有一種:harness 抓出你沒注意的 bug(`TASK-coupon.md`):**
+
+說「完成 TASK-coupon.md」(加 SAVE200 折價券,折 200 元)。直覺寫法 `price - 200`,大額購物車沒事、happy-path 測試也過 —— 但小額購物車(如 150 元)總額會變成 **−50**。
+- `naive`:沒有人攔,帶著負總額直接出貨。
+- `main`:gate 的 invariant 測試(折後不可為負)擋下,`/independent-review` 也會抓出來判「需修改」。
 
 ## 想換 model?
 
