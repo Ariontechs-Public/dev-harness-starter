@@ -1,0 +1,6 @@
+{
+  "skillOverrides": {
+    "systematic-debugging": "off",
+    "superpowers:systematic-debugging": "off"
+  }
+}
