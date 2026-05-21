@@ -63,6 +63,41 @@ git diff naive..main --stat
 
 在你的 Claude Code 裡 `/model` 切換就好,這層 harness 一行都不用動 —— 這就是「手腦分離」:腦(model)可換,手(harness)是你長期累積、屬於你的資產。
 
+## 進階:跨模型驗證(MessageAPI runner)
+
+上面是用「你自己的 Claude Code」親手感受。但有人會問:**這效果是 Claude 特有的,還是換個模型也成立?** 為了能客觀、可重現地回答,這個 repo 另外附了一個**薄薄的跨模型 runner**(`runner/`)。
+
+它不靠任何客戶端設定(你的 skill / hook / 全域 CLAUDE.md 都不會混進來)—— 它自己組 system prompt,透過 Vercel AI SDK 把**同一批任務**丟給不同模型(跟 opencode 接 75+ 家模型同一套路),分「有 harness / 沒 harness」各跑一次,再跑**真的 gate**。換模型只改一個 `provider/model` 字串。
+
+**免 API key 就能看到差別**(replay 一次真實跑的回覆,gate 真的跑):
+
+```bash
+cd runner && npm install && npm run demo
+```
+
+會印出像這樣的對照(節錄 coupon 任務,實測 gpt-4o-mini / gpt-4o):
+
+```
+━━━ Task: coupon ━━━
+  openai:gpt-4o-mini
+    OFF (naive)   : wrote code → gate ✗ FAIL  ← shipped, gate caught it
+    ON  (harness) : asked DoR first, held off ✓  ← refused to barrel ahead
+  openai:gpt-4o
+    OFF (naive)   : wrote code → gate ✗ FAIL  ← shipped, gate caught it
+    ON  (harness) : asked DoR first, held off ✓  ← refused to barrel ahead
+```
+
+兩個誠實的發現:**(1)** harness 效果跨模型成立 —— ON 模式兩個模型都停下來先問 DoR(疊加?可負?最低門檻?),OFF 都直接動手。**(2)** gate 攔的是「壞掉」本身,不限定哪一種壞法 —— 這兩個模型的 OFF 甚至沒寫出預期的負總額,而是改壞了既有的 SALE/VIP,gate 照樣擋下。
+
+想真的打模型(需要 key,會花 token):
+
+```bash
+export OPENROUTER_API_KEY=...   # 一把 key → Claude / GPT / Gemini
+cd runner && npm run run        # 換模型改 runner/src/models.ts
+```
+
+細節見 [`runner/README.md`](runner/README.md);設計與計畫在 `docs/specs/` 與 `docs/plans/`。
+
 ## 三層結構
 
 | 層 | 在這 repo 裡 | 角色 |
