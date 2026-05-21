@@ -147,5 +147,13 @@ outcome independent of the model.
 
 ## Open questions
 
-- Exact heuristic for `askedFirst` classification — refine against real outputs.
+- ~~Exact heuristic for `askedFirst` classification — refine against real outputs.~~
+  **Calibrated (2026-05-22).** A first live sweep (OpenAI gpt-4o-mini / gpt-4o)
+  showed a bare-`?` heuristic over-counted OFF-mode action checklists as "asked"
+  and missed a genuine ON-mode clarification. `classify.ts` now keys on
+  request-for-input phrases (zh + en) instead, with tests built from the captured
+  replies (`runner/samples/sample-replies.md`, replayable via `npm run demo`).
+  Known residual: a model that gives a plan *and* softly asks for a code snippet
+  can still read as "asked" — acceptable for v1; a true fix needs LLM-judged
+  classification rather than regex.
 - Whether to pin model versions in `models.ts` or pull live from models.dev.
