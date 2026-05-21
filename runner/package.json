@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "test": "vitest run",
-    "run": "tsx src/run.ts"
+    "run": "tsx src/run.ts",
+    "demo": "tsx src/demo.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.0",
