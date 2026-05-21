@@ -4,10 +4,28 @@
 
 這是馬在飛科技「產品研發 AI 代理人」概念的最小可跑範本 —— 不碰你自己的 code、零額外 token(用你現有的 Claude Code 訂閱跑)。
 
+## 結果差別(同一個 model,同一句任務)
+
+把「幫購物車加 VIP 折扣」丟給同一個 Claude,只差有沒有 harness:
+
+**Feature:折扣算對了嗎** — gate 把關
+
+| 沒 harness | 有 harness |
+|---|---|
+| ![naive](docs/img/01-feature-naive.png) | ![main](docs/img/02-feature-main.png) |
+
+**Bug:總額會變負,有人抓到嗎** — 獨立審查把關
+
+| 沒 harness | 有 harness |
+|---|---|
+| ![naive](docs/img/03-bug-naive.png) | ![main](docs/img/04-bug-main.png) |
+
+> 同一個模型寫的;差別只是 main 多了 invariant 測試的 gate(抓金額算錯)+ 一個 `/independent-review`(抓沒人想到的負總額)。
+
 ## 親手試(5 分鐘)
 
 ```bash
-git clone <this-repo> && cd dev-harness-starter
+git clone https://github.com/Ariontechs-Public/dev-harness-starter && cd dev-harness-starter
 cd sample-app && npm install && cd ..
 ```
 
@@ -51,7 +69,8 @@ git diff naive..main --stat
 |---|---|---|
 | Context | `CLAUDE.md` | 讓模型知道規則 / DoR / 你的領域知識(fat skills) |
 | Tool use | gate 腳本能跑什麼 | 限制即設計 |
-| Hooks | `.claude/settings.json` Stop hook | 出口把關,gate 沒過不准收工 |
+| Hooks | `.claude/settings.json`:`UserPromptSubmit`(注入 DoR)+ `Stop`(gate 把關) | 入口提醒 + 出口把關,gate 沒過不准收工 |
+| 獨立審查 | `.claude/commands/independent-review.md` | fork 乾淨 context 重審、不信自我報告 |
 
 完整的概念說明:[什麼是 Agent Harness](https://www.ariontechs.com/zh/notes/2026-05-20-what-is-agent-harness) · [我們的 RD Agent Harness 怎麼設計](https://www.ariontechs.com/zh/notes/2026-05-21-rd-agent-harness)
 
