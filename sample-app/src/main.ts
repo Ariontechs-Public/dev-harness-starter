@@ -1,7 +1,7 @@
 import { subtotal } from "./cart";
 import type { CartItem } from "./cart";
 
-let items: CartItem[] = [
+const items: CartItem[] = [
   { name: "T-shirt", price: 500, qty: 2 },
   { name: "Mug", price: 150, qty: 1 },
 ];
