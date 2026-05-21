@@ -1,14 +1,17 @@
-import { describe, it, expect } from 'vitest';
-import { applyDiscount } from './discount.js';
+import { describe, it, expect } from "vitest";
+import { applyDiscount } from "./discount";
 
-describe('applyDiscount (happy path)', () => {
-  it('SALE gives 10% off', () => {
-    expect(applyDiscount(100, 'SALE')).toBe(90);
+describe("applyDiscount", () => {
+  it("SALE = 10% off", () => {
+    expect(applyDiscount(100, "SALE")).toBe(90);
   });
-  it('VIP gives 20% off', () => {
-    expect(applyDiscount(100, 'VIP')).toBe(80);
+  it("VIP = 20% off", () => {
+    expect(applyDiscount(100, "VIP")).toBe(80);
   });
-  it('unknown code = no discount', () => {
-    expect(applyDiscount(100, 'NOPE')).toBe(100);
+  it("rounds to 2 decimals", () => {
+    expect(applyDiscount(9.99, "VIP")).toBe(7.99);
+  });
+  it("unknown code = no discount", () => {
+    expect(applyDiscount(100, "NOPE")).toBe(100);
   });
 });
