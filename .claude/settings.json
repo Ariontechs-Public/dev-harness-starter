@@ -4,5 +4,8 @@
     "superpowers:systematic-debugging": "off",
     "brainstorming": "off",
     "superpowers:brainstorming": "off"
+  },
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": false
   }
 }
