@@ -90,13 +90,15 @@ For each `(task, model, mode∈{off,on})`:
 
 ### Gate post-step (`gate.ts`)
 
-For tasks that produce code (coupon, bug):
+`gate/gate.sh` resolves `../sample-app` by relative path, so it always targets the
+real `sample-app`. Rather than duplicate that wiring into a temp copy, the runner
+applies the candidate in place and guarantees restoration:
 
-1. Copy `sample-app/src/discount.ts` (plus whatever `gate/gate.sh` needs) into a
-   temp working dir.
-2. Splice the model's `applyDiscount` into the copy.
-3. Run `bash gate/gate.sh` against the copy; capture exit code + output.
-4. Return `{ gatePassed: boolean, output: string }`.
+1. Read and back up `sample-app/src/discount.ts` in memory.
+2. Write the model's produced `discount.ts` contents to that path.
+3. Run `bash gate/gate.sh`; capture exit code + combined stdout/stderr.
+4. In a `finally`, restore the original file no matter what.
+5. Return `{ gatePassed: boolean, output: string }`.
 
 If the model asked-first and produced no code, gate is recorded as `n/a`.
 
