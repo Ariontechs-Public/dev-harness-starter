@@ -1,5 +1,16 @@
 {
+  "skillOverrides": {
+    "systematic-debugging": "off",
+    "superpowers:systematic-debugging": "off"
+  },
   "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/gate/dor-reminder.sh\"" }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
