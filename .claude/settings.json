@@ -1,20 +1,28 @@
 {
   "skillOverrides": {
     "systematic-debugging": "off",
-    "superpowers:systematic-debugging": "off"
+    "superpowers:systematic-debugging": "off",
+    "brainstorming": "off",
+    "superpowers:brainstorming": "off"
   },
   "hooks": {
     "UserPromptSubmit": [
       {
         "hooks": [
-          { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/gate/dor-reminder.sh\"" }
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/gate/dor-reminder.sh\""
+          }
         ]
       }
     ],
     "Stop": [
       {
         "hooks": [
-          { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/gate/gate.sh\"" }
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/gate/gate.sh\""
+          }
         ]
       }
     ]
